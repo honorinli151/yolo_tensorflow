@@ -1,3 +1,12 @@
+# @Author: chenleli
+# @Date:   2018-7-12 14:32:13
+# @Email:  chenle.li@student.ecp.fr
+# @Filename: pascal_voc.py
+# @Last modified by:   chenleli
+# @Last modified time: 2018-7-13 20:25:06
+
+
+
 import os
 import xml.etree.ElementTree as ET
 import numpy as np
