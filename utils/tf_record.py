@@ -3,7 +3,7 @@
 # @Email:  chenle.li@student.ecp.fr
 # @Filename: tf_record.py
 # @Last modified by:   chenleli
-# @Last modified time: 2018-7-13 21:30:04
+# @Last modified time: 2018-7-14 17:32:05
 
 """
 Read from tfrecord files, return a queue for training.
@@ -73,16 +73,16 @@ class tf_record():
             'image/class/text': tf.FixedLenFeature([], tf.string),
             'image/encoded': tf.FixedLenFeature([], tf.string),
             'image/filename': tf.FixedLenFeature([], tf.string),
-            'image/object/bbox/xmax': tf.VarFeature(tf.float32),
-            'image/object/bbox/xmin': tf.VarFeature(tf.float32),
-            'image/object/bbox/ymax': tf.VarFeature(tf.float32),
-            'image/object/bbox/ymin': tf.VarFeature(tf.float32),
-            'image/object/class/label': tf.VarFeature(tf.int64),
-            'image/object/class/text': tf.VarFeature(tf.string),
-            'image/object/depiction': tf.VarFeature(tf.int64),
-            'image/object/group_of': tf.VarFeature(tf.int64),
-            'image/object/occluded': tf.VarFeature(tf.int64),
-            'image/object/truncated': tf.VarFeature(tf.int64),
+            'image/object/bbox/xmax': tf.VarLenFeature(tf.float32),
+            'image/object/bbox/xmin': tf.VarLenFeature(tf.float32),
+            'image/object/bbox/ymax': tf.VarLenFeature(tf.float32),
+            'image/object/bbox/ymin': tf.VarLenFeature(tf.float32),
+            'image/object/class/label': tf.VarLenFeature(tf.int64),
+            'image/object/class/text': tf.VarLenFeature(tf.string),
+            'image/object/depiction': tf.VarLenFeature(tf.int64),
+            'image/object/group_of': tf.VarLenFeature(tf.int64),
+            'image/object/occluded': tf.VarLenFeature(tf.int64),
+            'image/object/truncated': tf.VarLenFeature(tf.int64),
             'image/source_id': tf.FixedLenFeature([], tf.string)
         })
         image, label = features['image/encoded'], features['image/class/label']
