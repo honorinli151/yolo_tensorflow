@@ -3,7 +3,7 @@
 # @Email:  chenle.li@student.ecp.fr
 # @Filename: tf_record.py
 # @Last modified by:   chenleli
-# @Last modified time: 2018-7-14 17:32:05
+# @Last modified time: 2018-7-15 20:03:25
 
 """
 Read from tfrecord files, return a queue for training.
@@ -14,6 +14,10 @@ import tensorflow as tf
 import numpy as np
 import pickle
 import yolo.config as cfg
+
+
+def transfer_sparse_dense(tensors):
+    return [tf.sparse_tensor_to_dense(tensor) for tensor in tensors]
 
 
 def get_train_features():
@@ -61,18 +65,24 @@ class tf_record():
         self.image_size = cfg.IMAGE_SIZE
         self.cell_size = cfg.CELL_SIZE
         self.classes = cfg.CLASSES
+        self.features = cfg.FEATURES
         self.test_tfrecord_path = os.listdir(self.data_path)[0]
 
-    def input_pipeline_queque():
+    def get_features(self, features):
+        return [features[feature] for feature in self.FEATURES]
+
+    def input_pipeline(self, filenames):
 
         # By default, we use the config for train_tfrecord
-        filename_queue = tf.train.string_input_producer(filenames, num_epochs=num_epochs, shuffle=True)
-        features = tf.parse_example(serialized_example,
+        filename_queue = tf.train.string_input_producer([self.data_path],  shuffle=True)
+        reader = tf.TFRecordReader()
+        _, serialized_example = reader.read(filename_queue)
+        features = tf.parse_single_example(serialized_example,
         features={
-            'image/class/label': tf.FixedLenFeature([], tf.int64),
-            'image/class/text': tf.FixedLenFeature([], tf.string),
-            'image/encoded': tf.FixedLenFeature([], tf.string),
-            'image/filename': tf.FixedLenFeature([], tf.string),
+            'image/class/label': tf.VarLenFeature(tf.int64),
+            'image/class/text': tf.VarLenFeature(tf.string),
+            'image/encoded': tf.VarLenFeature(tf.string),
+            'image/filename': tf.VarLenFeature(tf.string),
             'image/object/bbox/xmax': tf.VarLenFeature(tf.float32),
             'image/object/bbox/xmin': tf.VarLenFeature(tf.float32),
             'image/object/bbox/ymax': tf.VarLenFeature(tf.float32),
@@ -83,13 +93,12 @@ class tf_record():
             'image/object/group_of': tf.VarLenFeature(tf.int64),
             'image/object/occluded': tf.VarLenFeature(tf.int64),
             'image/object/truncated': tf.VarLenFeature(tf.int64),
-            'image/source_id': tf.FixedLenFeature([], tf.string)
+            'image/source_id': tf.VarLenFeature(tf.string)
         })
-        image, label = features['image/encoded'], features['image/class/label']
-        image_batch, label_batch = tf.train.shuffle_batch([example, label], batch_size=batch_size, capacity=capacity,\
-        min_after_dequeue=min_after_dequeue)
-        return image_batch, label_batch
-        # TODO Check repeat.
+        sparse_data = get_features(features)
+        dense_data = transfer_sparse_dense(sparse_data)
+        return dense_data
+
 
     def inspect_tfrecord():
 

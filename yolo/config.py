@@ -1,3 +1,12 @@
+# @Author: chenleli
+# @Date:   2018-7-12 14:32:13
+# @Email:  chenle.li@student.ecp.fr
+# @Filename: config.py
+# @Last modified by:   chenleli
+# @Last modified time: 2018-7-15 19:55:31
+
+
+
 import os
 
 #
@@ -24,6 +33,7 @@ CLASSES = ['aeroplane', 'bicycle', 'bird', 'boat', 'bottle', 'bus',
 
 FLIPPED = True
 
+FEAUTURES = ['image/class/label', 'image/object/bbox/xmax', 'image/object/bbox/xmin', 'image/object/bbox/ymax', 'image/object/bbox/ymin', 'image/encoded']
 
 #
 # model parameter
